@@ -59,17 +59,17 @@ class Transform(beam.DoFn):
 
         #compile needed values into new dictionary
         new_dict = {
-        "order_id" : element["order_id"],
-        "order_address":[
-            {"order_building_number" : order_building_number,
-             "order_street_name" : order_street_name,
-             "order_city" : order_city,
-             "order_state_code" : order_state_code,
-             "order_zip_code" : order_zip_code}],
-        "customer_first_name" : customer_first_name,
-        "customer_last_name" : customer_last_name,
-        "customer_ip": element["customer_ip"],
-        "cost_total" : round(cost_total, 2)
+            "order_id" : element["order_id"],
+            "order_address":[
+                {"order_building_number" : order_building_number,
+                 "order_street_name" : order_street_name,
+                 "order_city" : order_city,
+                 "order_state_code" : order_state_code,
+                 "order_zip_code" : order_zip_code}],
+            "customer_first_name" : customer_first_name,
+            "customer_last_name" : customer_last_name,
+            "customer_ip": element["customer_ip"],
+            "cost_total" : round(cost_total, 2)
         }
         yield new_dict
 
