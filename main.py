@@ -100,11 +100,12 @@ class Conversion(beam.DoFn):
 def run():
     o = beam.options.pipeline_options.PipelineOptions(streaming = True, save_main_session = True)
     with beam.Pipeline(options=o) as p:
+
             #Read in message and convert to dictionary
         raw_data = p | 'Read in Message' >> beam.io.ReadFromPubSub(subscription=SUBSCRIPTION_ID)
         conv_data = raw_data | 'Convert from Bytestring to Dict' >> beam.ParDo(Conversion())
 
-            #Create message and write to PubSub
+            #Create inventory message and write to PubSub
         ps_message = conv_data | 'Create PubSub Output' >> beam.ParDo(Create_Message())
         conv_message = ps_message | 'Convert Message From Dict to Bytestring' >> beam.Map(lambda s: json.dumps(s).encode("utf-8"))
         conv_message | 'Publish USD Order' >> beam.io.WriteToPubSub(topic=OUT_TOP)
