@@ -98,7 +98,7 @@ class Conversion(beam.DoFn):
         return [element]
 
 def run():
-    o = beam.options.pipeline_options.PipelineOptions(streaming = True, save_main_session = True)
+    o = beam.options.pipeline_options.PipelineOptions(streaming = True)
     with beam.Pipeline(options=o) as p:
 
             #Read in message and convert to dictionary
@@ -106,9 +106,9 @@ def run():
         conv_data = raw_data | 'Convert from Bytestring to Dict' >> beam.ParDo(Conversion())
 
             #Create inventory message and write to PubSub
-        ps_message = conv_data | 'Create PubSub Output' >> beam.ParDo(Create_Message())
-        conv_message = ps_message | 'Convert Message From Dict to Bytestring' >> beam.Map(lambda s: json.dumps(s).encode("utf-8"))
-        conv_message | 'Publish USD Order' >> beam.io.WriteToPubSub(topic=OUT_TOP)
+        conv_data | beam.ParDo(Create_Message()) | \
+            beam.Map(lambda s: json.dumps(s).encode("utf-8")) | \
+            beam.io.WriteToPubSub(topic=OUT_TOP)
 
             #Partition data on currency type
         usd, eur, gbp = (
